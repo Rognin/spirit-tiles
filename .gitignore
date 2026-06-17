@@ -1,0 +1,59 @@
+# Godot 4+ specific ignores
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Mono-specific ignores
+.mono/
+data_*/
+
+# Imported translations (automatically generated from CSV files)
+*.translation
+
+# Mac specific ignores
+.DS_Store
+
+# Windows specific ignores
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# C# / .NET build artifacts
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+*.csproj.user
+*.sln.docstates
+*.userosscache
+*.sln.cache
+
+# Rider IDE
+.idea/
+*.sln.iml
+
+# VS Code
+.vscode/
+
+# NuGet
+*.nupkg
+packages/
+*.nuget.props
+*.nuget.targets
+
+# Build/export output
+android/
+ios/
+*.pck
+*.exe
+*.dmg
+*.app
+*.zip
+export/
+builds/
+
+# Crashlogs and editor logs
+*.log

@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://nq34ro31abi2"]
+
+[ext_resource type="PackedScene" uid="uid://wnwg33yyrh2i" path="res://Scenes/tile.tscn" id="1_hf1ha"]
+[ext_resource type="Script" uid="uid://ct82jhtlopgdt" path="res://Scripts/HexGridManager.cs" id="1_m34ki"]
+[ext_resource type="Script" uid="uid://dp0l1qnp8j5e6" path="res://Scripts/HexGridData.cs" id="2_kwrm5"]
+[ext_resource type="Resource" uid="uid://dt0mqnipxaaym" path="res://Scripts/Tiles/water.tres" id="2_rlidi"]
+[ext_resource type="Resource" uid="uid://cp6h48ec8lskb" path="res://Scripts/Tiles/rock.tres" id="3_1qnfl"]
+[ext_resource type="Script" uid="uid://bi3fhd0hjbsgc" path="res://Scripts/HexGridDisplay.cs" id="3_r8bcl"]
+[ext_resource type="Resource" uid="uid://dk25aljn5g4jw" path="res://Scripts/Tiles/forest.tres" id="5_1qnfl"]
+
+[node name="Gameplay" type="Node2D" unique_id=1647816417]
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=100863869]
+
+[node name="Board" type="Node2D" parent="." unique_id=1641405995]
+
+[node name="HexGridManager" type="Node2D" parent="Board" unique_id=2046420377 node_paths=PackedStringArray("_hexGridData", "_hexGridDisplay")]
+position = Vector2(-360, -196)
+script = ExtResource("1_m34ki")
+_numberOfRows = 6
+_numberOfColumns = 9
+_hexGridData = NodePath("HexGridData")
+_hexGridDisplay = NodePath("HexGridDisplay")
+_waterMyTile = ExtResource("2_rlidi")
+_mountainMyTile = ExtResource("3_1qnfl")
+
+[node name="HexGridData" type="Node" parent="Board/HexGridManager" unique_id=264340632]
+script = ExtResource("2_kwrm5")
+_testMyTileData = ExtResource("5_1qnfl")
+
+[node name="HexGridDisplay" type="Node2D" parent="Board/HexGridManager" unique_id=227776937]
+script = ExtResource("3_r8bcl")
+_tileScene = ExtResource("1_hf1ha")
