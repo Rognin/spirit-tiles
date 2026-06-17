@@ -26,10 +26,9 @@ public partial class HexGridDisplay : Node2D
         {
             GridCellData cell = kvp.Value;
             Vector2I coords = kvp.Key;
-            TileTypes tileType = cell.CurrentTileType;
             if (!cell.IsEmpty())
             {
-                PlaceAndDrawTile(coords, cell.CurrentMyTileData);
+                PlaceAndDrawTile(coords, cell.CurrentTileData);
             }
         }
     }

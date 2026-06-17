@@ -3,14 +3,8 @@ using Godot.Collections;
 
 namespace Spirittiles.Scripts;
 
-// [Tool]
-// [GlobalClass]
 public partial class HexGridData : Node
 {
-    // [Export] private Resource _testMyTileData;
-    // [ExportToolButton("My Button Label")]
-    // public Callable MyButton => Callable.From(() => AddTile(0, 0, _testMyTileData as MyTileData));
-    
     [Export] private Dictionary<Vector2I, GridCellData> _cells = new();
     public int NumberOfRows { get; set; }
     public int NumberOfColumns { get; set; }
@@ -35,9 +29,9 @@ public partial class HexGridData : Node
         }
     }
 
-    public void AddTile(int row, int col, MyTileData newMyTileData)
+    public void AddTile(int row, int col, MyTileData newTileData)
     {
-        if (newMyTileData == null)
+        if (newTileData == null)
         {
             GD.PrintErr("AddTile called with null MyTileData");
             return;
@@ -47,9 +41,9 @@ public partial class HexGridData : Node
             GD.PrintErr($"No cell at {row}, {col}");
             return;
         }
-        MyTileData oldTileData = _cells[new Vector2I(row, col)].CurrentMyTileData;
-        _cells[new Vector2I(row, col)].CurrentTileType = newMyTileData.Type;
-        EmitSignal(SignalName.CellChanged, row, col, oldTileData, newMyTileData);
+        MyTileData oldTileData = _cells[new Vector2I(row, col)].CurrentTileData;
+        _cells[new Vector2I(row, col)].CurrentTileData = newTileData;
+        EmitSignal(SignalName.CellChanged, row, col, oldTileData, newTileData);
     }
 
     public Dictionary<Vector2I, GridCellData> GetCurrentCells()
@@ -61,7 +55,14 @@ public partial class HexGridData : Node
     {
         foreach (var kvp in _cells)
         {
-            GD.Print(kvp.Value.CurrentTileType);
+            if (kvp.Value.CurrentTileData != null)
+            {
+                GD.Print(kvp.Value.CurrentTileData.Type);
+            }
+            else
+            {
+                GD.Print($"No cell at {kvp.Key}");
+            }
         }
     }
 }
