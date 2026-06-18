@@ -47,6 +47,21 @@ public partial class Tile : Area2D
             else
             {
                 _dragging = false;
+                TryToSnap();
+            }
+        }
+    }
+
+    private void TryToSnap()
+    {
+        foreach (Area2D area in GetOverlappingAreas())
+        {
+            if (area.GetParent() is ISnapAreaForTiles snapArea &&
+                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 SnapPos))
+            {
+                GlobalPosition = SnapPos;
+                snapArea.OnTilePlaced(this);
+                return;
             }
         }
     }

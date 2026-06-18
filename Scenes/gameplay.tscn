@@ -6,7 +6,8 @@
 [ext_resource type="Resource" uid="uid://dt0mqnipxaaym" path="res://Scripts/Tiles/water.tres" id="2_rlidi"]
 [ext_resource type="Resource" uid="uid://cp6h48ec8lskb" path="res://Scripts/Tiles/rock.tres" id="3_1qnfl"]
 [ext_resource type="Script" uid="uid://bi3fhd0hjbsgc" path="res://Scripts/HexGridDisplay.cs" id="3_r8bcl"]
-[ext_resource type="Resource" uid="uid://dk25aljn5g4jw" path="res://Scripts/Tiles/forest.tres" id="5_1qnfl"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rlidi"]
 
 [node name="Gameplay" type="Node2D" unique_id=1647816417]
 
@@ -26,8 +27,15 @@ _mountainMyTile = ExtResource("3_1qnfl")
 
 [node name="HexGridData" type="Node" parent="Board/HexGridManager" unique_id=264340632]
 script = ExtResource("2_kwrm5")
-_testMyTileData = ExtResource("5_1qnfl")
 
-[node name="HexGridDisplay" type="Node2D" parent="Board/HexGridManager" unique_id=227776937]
+[node name="HexGridDisplay" type="Node2D" parent="Board/HexGridManager" unique_id=227776937 node_paths=PackedStringArray("_snapArea", "_snapAreaCollider")]
 script = ExtResource("3_r8bcl")
 _tileScene = ExtResource("1_hf1ha")
+_snapArea = NodePath("SnappableArea")
+_snapAreaCollider = NodePath("SnappableArea/CollisionShape2D")
+
+[node name="SnappableArea" type="Area2D" parent="Board/HexGridManager/HexGridDisplay" unique_id=2082563250]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Board/HexGridManager/HexGridDisplay/SnappableArea" unique_id=253931912]
+shape = SubResource("RectangleShape2D_rlidi")

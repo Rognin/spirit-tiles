@@ -5,16 +5,19 @@ using Godot.NativeInterop;
 
 namespace Spirittiles.Scripts;
 
-public partial class HexGridManager : Node
+public partial class HexGridManager : Node, IHexGrid
 {
 	[Export] private int _numberOfRows = 20;
 	[Export] private int _numberOfColumns = 20;
 
+	// hex grid components
 	[Export] private HexGridData _hexGridData;
 	[Export] private HexGridDisplay _hexGridDisplay;
 	
 	[Export] private MyTileData _waterMyTile;
 	[Export] private MyTileData _mountainMyTile;
+	
+	//
 	
 	public override void _Ready()
 	{
@@ -22,6 +25,9 @@ public partial class HexGridManager : Node
 		_hexGridDisplay.Initialize(_hexGridData);
 		
 		_hexGridData.CellChanged += OnCellChanged;
+		
+		// configure snapAreaCollider
+		_hexGridDisplay.UpdateSnapAreaColliderShape();
 		
 		// TEMP: manually adding tiles for testing
 		_hexGridData.AddTile(0, 0, _waterMyTile);

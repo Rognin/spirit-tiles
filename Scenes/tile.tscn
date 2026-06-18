@@ -4,6 +4,8 @@
 [ext_resource type="Texture2D" uid="uid://dgf5q58gc38mw" path="res://Assets/hexagon-512x591.png" id="1_xsjyq"]
 
 [node name="Tile" type="Area2D" unique_id=1714546430 node_paths=PackedStringArray("_sprite")]
+collision_layer = 4
+collision_mask = 2
 script = ExtResource("1_4kj4d")
 _sprite = NodePath("Sprite2D")
 

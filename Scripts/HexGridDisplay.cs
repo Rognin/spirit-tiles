@@ -4,7 +4,7 @@ using Godot.Collections;
 
 namespace Spirittiles.Scripts;
 
-public partial class HexGridDisplay : Node2D
+public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
 {
     
     [Export] private float _tileScale = 1;
@@ -16,8 +16,13 @@ public partial class HexGridDisplay : Node2D
     private int _numberOfColumns;
     
     [Export] private PackedScene _tileScene;
+    
+    [Export] private Area2D _snapArea;
+    [Export] private CollisionShape2D _snapAreaCollider;
 
     private Dictionary<Vector2I, Tile> _placedTiles = new Dictionary<Vector2I, Tile>();
+    
+    private Dictionary<Vector2I, Vector2> _cellCenters = new Dictionary<Vector2I, Vector2>();
     public void Initialize(HexGridData hexGridData)
     {
         _numberOfRows = hexGridData.NumberOfRows;
@@ -31,6 +36,9 @@ public partial class HexGridDisplay : Node2D
                 PlaceAndDrawTile(coords, cell.CurrentTileData);
             }
         }
+        
+        // fill the array of hex center coords
+        BuildCellCentersDict();
     }
 
     public void PlaceAndDrawTile(Vector2I coords, MyTileData data)
@@ -41,6 +49,18 @@ public partial class HexGridDisplay : Node2D
         AddChild(tile);
         tile.Initialize(data);
         _placedTiles[coords] = tile;
+    }
+
+    private void BuildCellCentersDict()
+    {
+        _cellCenters.Clear();
+        for (int i = 0; i < _numberOfRows; i++)
+        {
+            for (int j = 0; j < _numberOfColumns; j++)
+            {
+                _cellCenters.Add(new Vector2I(i, j), CenterFromRowColumn(i, j));
+            }
+        }
     }
 
     public override void _Draw()
@@ -54,6 +74,8 @@ public partial class HexGridDisplay : Node2D
             }
         }
     }
+    
+    // grid coordinates related methods
 
     private Vector2[] VerticesFromCenter(Vector2 center)
     {
@@ -76,5 +98,62 @@ public partial class HexGridDisplay : Node2D
         float y = TILE_HEIGHT / 2 * (row * 1.5f + 1);
 		
         return new Vector2(x, y);
+    }
+    
+    // tile placement related methods
+
+    public void OnTilePlaced(Tile tile)
+    {
+        // TODO: add a signal to inform that a tile has been placed and do all the rest of the stuff
+        // Change the data structures, etc.
+    }
+
+    private Vector2 CalculateGridSizeInPixels()
+    {
+        Vector2 result = new Vector2();
+        result.X = (_numberOfColumns + 0.5f) * HexGridDisplay.TILE_WIDTH;
+        result.Y = _numberOfRows * (HexGridDisplay.TILE_HEIGHT * 0.75f) + 0.25f * HexGridDisplay.TILE_HEIGHT;
+        return result;
+    }
+    
+    public void UpdateSnapAreaColliderShape()
+    {
+        Vector2 gridSize = CalculateGridSizeInPixels();
+        RectangleShape2D colliderShape = new RectangleShape2D();
+        colliderShape.Size = gridSize;
+        _snapAreaCollider.Shape = colliderShape;
+        _snapAreaCollider.Position = gridSize / 2f;
+    }
+    
+    public bool TryGetSnapPosition(Vector2 worldPos, out Vector2 snapPos)
+    {
+        Vector2 localPos = worldPos - GlobalPosition;
+        float minDist = float.MaxValue;
+        Vector2I closestCellCoord = default;
+        foreach (var (coord, center) in _cellCenters)
+        {
+            float distSqured = localPos.DistanceSquaredTo(center);
+            if (distSqured < minDist)
+            {
+                minDist = distSqured;
+                closestCellCoord = coord;
+            }
+        }
+
+        if (minDist == float.MaxValue) // empty grid
+        {
+            snapPos = Vector2.Zero;
+            return false;
+        }
+
+        float maxSnapDistance = TILE_WIDTH;
+        if (minDist > maxSnapDistance * maxSnapDistance)
+        {
+            snapPos = Vector2.Zero;
+            return false;
+        }
+
+        snapPos = GlobalPosition + CenterFromRowColumn(closestCellCoord.X, closestCellCoord.Y);
+        return true;
     }
 }
