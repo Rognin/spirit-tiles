@@ -57,3 +57,8 @@ builds/
 
 # Crashlogs and editor logs
 *.log
+
+# Claude Code
+.claude/
+CLAUDE.md
+memory/

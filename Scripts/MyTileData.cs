@@ -7,6 +7,4 @@ public partial class MyTileData : Resource
 {
     [Export] public Texture2D Texture { get; set; }
     [Export] public TileTypes Type { get; set; }
-    
-    public Vector2 SnapBackPosition { get; set; }
 }

@@ -1,0 +1,12 @@
+﻿1. Make sure the structure with Tile and TileData makes sense.
+Probably if I move all important-to-logic info about tiles into TileData and 
+just live the visual stuff to Tile itself that'll be fine.
+
+2. Check if any remaining weirdness persists or if the system is good for now.
+
+3. Add TileSpawner or something similar.
+
+4. Get to the point where I have a set of tiles being spawned (on button click or just infinite?) 
+and I can drag them to the main hexGrid
+
+5. Go from there!

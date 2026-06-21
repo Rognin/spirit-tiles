@@ -9,16 +9,16 @@ public partial class HexGridData : Node
     public int NumberOfRows { get; set; }
     public int NumberOfColumns { get; set; }
     
-    [Signal] public delegate void CellChangedEventHandler(int row, int column, MyTileData oldTileData, MyTileData newTileData);
+    [Signal] public delegate void CellCreatedEventHandler(int row, int column, MyTileData newTileData);
 
     public void Initialize(int numberOfRows, int numberOfColumns)
     {
         NumberOfRows = numberOfRows;
         NumberOfColumns = numberOfColumns;
-        FillWithEmptyCells();
+        // FillWithEmptyCells();
     }
 
-    public void FillWithEmptyCells()
+    /*public void FillWithEmptyCells()
     {
         for (int i = 0; i < NumberOfRows; i++)
         {
@@ -27,23 +27,41 @@ public partial class HexGridData : Node
                 _cells.Add(new Vector2I(i, j), new GridCellData());
             }
         }
-    }
+    }*/
 
-    public void AddTile(int row, int col, MyTileData newTileData)
+    public void CreateTile(int row, int col, MyTileData newTileData)
     {
         if (newTileData == null)
         {
             GD.PrintErr("AddTile called with null MyTileData");
             return;
         }
-        if (!_cells.ContainsKey(new Vector2I(row, col)))
+        if (_cells.ContainsKey(new Vector2I(row, col)))
         {
-            GD.PrintErr($"No cell at {row}, {col}");
+            GD.PrintErr($"There's already a cell at {row}, {col}");
             return;
         }
-        MyTileData oldTileData = _cells[new Vector2I(row, col)].CurrentTileData;
-        _cells[new Vector2I(row, col)].CurrentTileData = newTileData;
-        EmitSignal(SignalName.CellChanged, row, col, oldTileData, newTileData);
+        _cells.Add(new Vector2I(row, col), new GridCellData(newTileData));
+        EmitSignal(SignalName.CellCreated, row, col, newTileData);
+    }
+
+    public void RemoveTile(int row, int col)
+    {
+        _cells.Remove(new Vector2I(row, col));
+    }
+
+    public void AddTileAfterMove(int row, int col, MyTileData tileData)
+    {
+        if (_cells.ContainsKey(new Vector2I(row, col)))
+        {
+            // print error, TODO: change so some tiles can be added on top of each other
+            GD.PrintErr("HexGridData trying to add a tile after move where there's already a tile");
+        }
+        else
+        {
+            _cells.Add(new Vector2I(row, col), new GridCellData(tileData));
+            
+        }
     }
 
     public Dictionary<Vector2I, GridCellData> GetCurrentCells()

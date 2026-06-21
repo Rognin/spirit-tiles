@@ -5,4 +5,7 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
     <RootNamespace>Spirittiles</RootNamespace>
   </PropertyGroup>
+  <ItemGroup>
+    <Content Include="Scripts\ToDo.txt" />
+  </ItemGroup>
 </Project>

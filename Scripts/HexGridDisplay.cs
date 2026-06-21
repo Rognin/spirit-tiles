@@ -20,9 +20,12 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     [Export] private Area2D _snapArea;
     [Export] private CollisionShape2D _snapAreaCollider;
 
-    private Dictionary<Vector2I, Tile> _placedTiles = new Dictionary<Vector2I, Tile>();
+    // private Dictionary<Vector2I, Tile> _placedTiles = new Dictionary<Vector2I, Tile>();
     
     private Dictionary<Vector2I, Vector2> _cellCenters = new Dictionary<Vector2I, Vector2>();
+    
+    [Signal] public delegate void TileDroppedEventHandler(Tile tile, Vector2I snapCoords);
+    [Signal] public delegate void TileMovedEventHandler(Tile tile);
     public void Initialize(HexGridData hexGridData)
     {
         _numberOfRows = hexGridData.NumberOfRows;
@@ -33,7 +36,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
             Vector2I coords = kvp.Key;
             if (!cell.IsEmpty())
             {
-                PlaceAndDrawTile(coords, cell.CurrentTileData);
+                PlaceAndDrawNewTile(coords, cell.CurrentTileData);
             }
         }
         
@@ -41,15 +44,17 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         BuildCellCentersDict();
     }
 
-    public void PlaceAndDrawTile(Vector2I coords, MyTileData data)
+    public void PlaceAndDrawNewTile(Vector2I coords, MyTileData data)
     {
         // place tile
         Tile tile = _tileScene.Instantiate<Tile>();
         tile.Position = CenterFromRowColumn(coords.X, coords.Y);
+        tile.CurrentCoordinates = coords;
+        tile.CurrentSnapArea = this;
         AddChild(tile);
         tile.Initialize(data);
-        _placedTiles[coords] = tile;
-    }
+        // _placedTiles[coords] = tile; // commented out for now
+    } 
 
     private void BuildCellCentersDict()
     {
@@ -102,10 +107,16 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     // tile placement related methods
 
-    public void OnTilePlaced(Tile tile)
+    public void OnTileDropped(Tile tile, Vector2I snapCoords)
     {
-        // TODO: add a signal to inform that a tile has been placed and do all the rest of the stuff
-        // Change the data structures, etc.
+        EmitSignal(SignalName.TileDropped, tile, snapCoords);
+    }
+    
+    // called when a tile is moved from one cell to another
+    // including to a different snap area
+    public void OnTileMovedAway(Tile tile)
+    {
+        EmitSignal(SignalName.TileMoved, tile);
     }
 
     private Vector2 CalculateGridSizeInPixels()
@@ -125,7 +136,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         _snapAreaCollider.Position = gridSize / 2f;
     }
     
-    public bool TryGetSnapPosition(Vector2 worldPos, out Vector2 snapPos)
+    public bool TryGetSnapPosition(Vector2 worldPos, out Vector2 snapPos, out Vector2I snapCoords)
     {
         Vector2 localPos = worldPos - GlobalPosition;
         float minDist = float.MaxValue;
@@ -143,6 +154,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         if (minDist == float.MaxValue) // empty grid
         {
             snapPos = Vector2.Zero;
+            snapCoords = Vector2I.Zero;
             return false;
         }
 
@@ -150,10 +162,12 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         if (minDist > maxSnapDistance * maxSnapDistance)
         {
             snapPos = Vector2.Zero;
+            snapCoords = Vector2I.Zero;
             return false;
         }
 
         snapPos = GlobalPosition + CenterFromRowColumn(closestCellCoord.X, closestCellCoord.Y);
+        snapCoords = new Vector2I(closestCellCoord.X, closestCellCoord.Y);
         return true;
     }
 }

@@ -5,8 +5,14 @@ namespace Spirittiles.Scripts;
 public partial class Tile : Area2D
 {
     [Export] private Sprite2D _sprite;
-    private MyTileData _data;
+    public MyTileData Data;
+    public Vector2 SnapBackPosition { get; set; }
+    public int Id { get; set; }
     
+    public ISnapAreaForTiles CurrentSnapArea { get; set; }
+
+    public Vector2I CurrentCoordinates { get; set; }
+
     // dragging
     private bool _dragging = false;
     private Vector2 _dragStartOffset = Vector2.Zero;
@@ -23,7 +29,7 @@ public partial class Tile : Area2D
             GD.PrintErr("Tile trying to initialize with a null data");
             return;
         }
-        _data = data;
+        Data = data;
         _sprite.Texture = data.Texture;
     }
 
@@ -52,15 +58,16 @@ public partial class Tile : Area2D
         }
     }
 
+    // method that gets called when the tile is dropped after dragging
     private void TryToSnap()
     {
         foreach (Area2D area in GetOverlappingAreas())
         {
             if (area.GetParent() is ISnapAreaForTiles snapArea &&
-                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 SnapPos))
+                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 SnapPos, out Vector2I snapCoords))
             {
                 GlobalPosition = SnapPos;
-                snapArea.OnTilePlaced(this);
+                snapArea.OnTileDropped(this, snapCoords);
                 return;
             }
         }

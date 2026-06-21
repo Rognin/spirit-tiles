@@ -24,22 +24,55 @@ public partial class HexGridManager : Node, IHexGrid
 		_hexGridData.Initialize(_numberOfRows, _numberOfColumns);
 		_hexGridDisplay.Initialize(_hexGridData);
 		
-		_hexGridData.CellChanged += OnCellChanged;
+		_hexGridData.CellCreated += OnCellCreated;
+		_hexGridDisplay.TileDropped += OnTileDropped;
+		_hexGridDisplay.TileMoved += OnTileMovedAway;
 		
 		// configure snapAreaCollider
 		_hexGridDisplay.UpdateSnapAreaColliderShape();
 		
 		// TEMP: manually adding tiles for testing
-		_hexGridData.AddTile(0, 0, _waterMyTile);
-		_hexGridData.AddTile(2, 2, _mountainMyTile);
+		_hexGridData.CreateTile(0, 0, _waterMyTile);
+		_hexGridData.CreateTile(2, 2, _mountainMyTile);
 		_hexGridData.PrintCurrentCells();
 	}
 
-	private void OnCellChanged(int row, int column, MyTileData oldTileData, MyTileData newTileData)
+	private void OnCellCreated(int row, int column, MyTileData newTileData)
 	{
-		_hexGridDisplay.PlaceAndDrawTile(new Vector2I(row, column), newTileData);
+		_hexGridDisplay.PlaceAndDrawNewTile(new Vector2I(row, column), newTileData);
 	}
 
+	private void OnTileDropped(Tile tile, Vector2I snapCoords)
+	{
+		// step 1: clear where the cell used to be
+
+		if (tile.CurrentSnapArea != null)
+		{
+			tile.CurrentSnapArea.OnTileMovedAway(tile);
+		}
+		
+		// step 2: add cell to the new position
+		
+		_hexGridData.AddTileAfterMove(snapCoords.X, snapCoords.Y, tile.Data);
+		
+		// step 3: update internal cell coords and curSnapArea
+		
+		tile.CurrentCoordinates = snapCoords;
+		tile.CurrentSnapArea = _hexGridDisplay;
+
+	}
+
+	private void OnTileMovedAway(Tile tile)
+	{
+		// for now only clear previous position of the tile
+		ClearTileAfterMove(tile);
+	}
+
+	private void ClearTileAfterMove(Tile tile)
+	{
+		// clear tile from HexGridData
+		_hexGridData.RemoveTile(tile.CurrentCoordinates.X, tile.CurrentCoordinates.Y);
+	}
 
 	public override void _Process(double delta)
 	{
