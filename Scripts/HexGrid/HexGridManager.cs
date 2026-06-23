@@ -39,7 +39,7 @@ public partial class HexGridManager : Node, IHexGrid
 		// TEMP: manually adding tiles for testing
 		_hexGridData.CreateBasicTile(0, 0, _waterSharedTile, TileIdAllocator.GetNextId());
 		_hexGridData.CreateBasicTile(2, 2, _mountainSharedTile, TileIdAllocator.GetNextId());
-		_hexGridData.PrintCurrentCells();
+		// _hexGridData.PrintCurrentCells();
 	}
 
 	private void OnCellCreated(int row, int column, TileLogic tile)

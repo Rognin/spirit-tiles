@@ -87,8 +87,6 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     {
         bool validDrop = TryGetSnapPosition(globalPos, out Vector2I snapCoords);
         
-        GD.Print($"HexGridDisplay snap coords: {snapCoords}");
-        
         EmitSignal(SignalName.TileDropped, id, validDrop, snapCoords);
     }
 

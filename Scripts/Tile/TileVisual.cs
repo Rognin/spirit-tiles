@@ -49,11 +49,21 @@ public partial class TileVisual : Area2D
                 ZIndex = 1;
                 _dragStartOffset = GlobalPosition - GetGlobalMousePosition();
             }
-            else
+        }
+    }
+
+    public override void _Input(InputEvent @event)
+    {
+        if (_dragging)
+        {
+            if (@event is InputEventMouseButton mouseEvent && mouseEvent.ButtonIndex == MouseButton.Left)
             {
-                _dragging = false;
-                ZIndex = 0;
-                EmitSignal(SignalName.TileVisualDropped, _id, GlobalPosition);
+                if (!mouseEvent.Pressed)
+                {
+                    _dragging = false;
+                    ZIndex = 0;
+                    EmitSignal(SignalName.TileVisualDropped, _id, GlobalPosition);
+                }
             }
         }
     }
