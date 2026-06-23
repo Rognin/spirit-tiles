@@ -3,7 +3,7 @@ using Godot;
 namespace Spirittiles.Scripts;
 
 [GlobalClass]
-public partial class GridCellData(MyTileData newData) : Node
+public partial class GridCellData(MyTileData newData) : Resource
 {
 
 	[Export] public MyTileData CurrentTileData { get; set; } = newData;

@@ -18,6 +18,7 @@ public partial class HexGridManager : Node, IHexGrid
 	[Export] private MyTileData _mountainMyTile;
 	
 	//
+	public TileIdAllocator TileIdAllocator { get; set; } // set by board
 	
 	public override void _Ready()
 	{
@@ -42,36 +43,36 @@ public partial class HexGridManager : Node, IHexGrid
 		_hexGridDisplay.PlaceAndDrawNewTile(new Vector2I(row, column), newTileData);
 	}
 
-	private void OnTileDropped(Tile tile, Vector2I snapCoords)
+	private void OnTileDropped(TileVisual tileVisual, Vector2I snapCoords)
 	{
 		// step 1: clear where the cell used to be
 
-		if (tile.CurrentSnapArea != null)
+		if (tileVisual.CurrentSnapArea != null)
 		{
-			tile.CurrentSnapArea.OnTileMovedAway(tile);
+			tileVisual.CurrentSnapArea.OnTileMovedAway(tileVisual);
 		}
 		
 		// step 2: add cell to the new position
 		
-		_hexGridData.AddTileAfterMove(snapCoords.X, snapCoords.Y, tile.Data);
+		_hexGridData.AddTileAfterMove(snapCoords.X, snapCoords.Y, tileVisual.Data);
 		
 		// step 3: update internal cell coords and curSnapArea
 		
-		tile.CurrentCoordinates = snapCoords;
-		tile.CurrentSnapArea = _hexGridDisplay;
+		tileVisual.SnapBackCoordinates = snapCoords;
+		tileVisual.CurrentSnapArea = _hexGridDisplay;
 
 	}
 
-	private void OnTileMovedAway(Tile tile)
+	private void OnTileMovedAway(TileVisual tileVisual)
 	{
 		// for now only clear previous position of the tile
-		ClearTileAfterMove(tile);
+		ClearTileAfterMove(tileVisual);
 	}
 
-	private void ClearTileAfterMove(Tile tile)
+	private void ClearTileAfterMove(TileVisual tileVisual)
 	{
 		// clear tile from HexGridData
-		_hexGridData.RemoveTile(tile.CurrentCoordinates.X, tile.CurrentCoordinates.Y);
+		_hexGridData.RemoveTile(tileVisual.SnapBackCoordinates.X, tileVisual.SnapBackCoordinates.Y);
 	}
 
 	public override void _Process(double delta)

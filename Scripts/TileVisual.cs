@@ -2,16 +2,14 @@
 
 namespace Spirittiles.Scripts;
 
-public partial class Tile : Area2D
+public partial class TileVisual : Area2D
 {
     [Export] private Sprite2D _sprite;
     public MyTileData Data;
     public Vector2 SnapBackPosition { get; set; }
-    public int Id { get; set; }
-    
     public ISnapAreaForTiles CurrentSnapArea { get; set; }
 
-    public Vector2I CurrentCoordinates { get; set; }
+    public Vector2I SnapBackCoordinates { get; set; }
 
     // dragging
     private bool _dragging = false;
@@ -64,9 +62,9 @@ public partial class Tile : Area2D
         foreach (Area2D area in GetOverlappingAreas())
         {
             if (area.GetParent() is ISnapAreaForTiles snapArea &&
-                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 SnapPos, out Vector2I snapCoords))
+                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 snapPos, out Vector2I snapCoords))
             {
-                GlobalPosition = SnapPos;
+                GlobalPosition = snapPos;
                 snapArea.OnTileDropped(this, snapCoords);
                 return;
             }

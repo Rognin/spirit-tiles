@@ -1,6 +1,6 @@
 ﻿namespace Spirittiles.Scripts;
 
-public enum TileTypes
+public enum TileType
 {
     Empty,
     Water,

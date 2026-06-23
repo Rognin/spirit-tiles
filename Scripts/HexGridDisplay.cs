@@ -24,8 +24,8 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     private Dictionary<Vector2I, Vector2> _cellCenters = new Dictionary<Vector2I, Vector2>();
     
-    [Signal] public delegate void TileDroppedEventHandler(Tile tile, Vector2I snapCoords);
-    [Signal] public delegate void TileMovedEventHandler(Tile tile);
+    [Signal] public delegate void TileDroppedEventHandler(TileVisual tile, Vector2I snapCoords);
+    [Signal] public delegate void TileMovedEventHandler(TileVisual tileVisual);
     public void Initialize(HexGridData hexGridData)
     {
         _numberOfRows = hexGridData.NumberOfRows;
@@ -47,12 +47,12 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     public void PlaceAndDrawNewTile(Vector2I coords, MyTileData data)
     {
         // place tile
-        Tile tile = _tileScene.Instantiate<Tile>();
-        tile.Position = CenterFromRowColumn(coords.X, coords.Y);
-        tile.CurrentCoordinates = coords;
-        tile.CurrentSnapArea = this;
-        AddChild(tile);
-        tile.Initialize(data);
+        TileVisual tileVisual = _tileScene.Instantiate<TileVisual>();
+        tileVisual.Position = CenterFromRowColumn(coords.X, coords.Y);
+        tileVisual.SnapBackCoordinates = coords;
+        tileVisual.CurrentSnapArea = this;
+        AddChild(tileVisual);
+        tileVisual.Initialize(data);
         // _placedTiles[coords] = tile; // commented out for now
     } 
 
@@ -107,16 +107,16 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     // tile placement related methods
 
-    public void OnTileDropped(Tile tile, Vector2I snapCoords)
+    public void OnTileDropped(TileVisual tileVisual, Vector2I snapCoords)
     {
-        EmitSignal(SignalName.TileDropped, tile, snapCoords);
+        EmitSignal(SignalName.TileDropped, tileVisual, snapCoords);
     }
     
     // called when a tile is moved from one cell to another
     // including to a different snap area
-    public void OnTileMovedAway(Tile tile)
+    public void OnTileMovedAway(TileVisual tileVisual)
     {
-        EmitSignal(SignalName.TileMoved, tile);
+        EmitSignal(SignalName.TileMoved, tileVisual);
     }
 
     private Vector2 CalculateGridSizeInPixels()
