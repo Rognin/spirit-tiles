@@ -13,6 +13,7 @@ public partial class Board : Node2D
         foreach (HexGridManager manager in HexGridManagers)
         {
             manager.TileIdAllocator = TileIdAllocator;
+            manager.Initialize();
         }
     }
 }

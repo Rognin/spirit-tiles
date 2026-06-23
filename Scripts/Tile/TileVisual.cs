@@ -5,30 +5,30 @@ namespace Spirittiles.Scripts;
 public partial class TileVisual : Area2D
 {
     [Export] private Sprite2D _sprite;
-    public MyTileData Data;
-    public Vector2 SnapBackPosition { get; set; }
-    public ISnapAreaForTiles CurrentSnapArea { get; set; }
-
-    public Vector2I SnapBackCoordinates { get; set; }
+    private int _id;
 
     // dragging
     private bool _dragging = false;
     private Vector2 _dragStartOffset = Vector2.Zero;
+    
+    // signals
+    [Signal] public delegate void TileVisualDroppedEventHandler(int id, Vector2 worldPos);
 
     public override void _Ready()
     {
         InputEvent += OnInputEvent;
     }
 
-    public void Initialize(MyTileData data)
+    public void Initialize(int id, SharedTileData data)
     {
         if (data == null)
         {
             GD.PrintErr("Tile trying to initialize with a null data");
             return;
         }
-        Data = data;
         _sprite.Texture = data.Texture;
+        _sprite.Modulate = data.Color;
+        _id = id;
     }
 
     public override void _Process(double delta)
@@ -46,27 +46,14 @@ public partial class TileVisual : Area2D
             if (mouseEvent.Pressed)
             {
                 _dragging = true;
+                ZIndex = 1;
                 _dragStartOffset = GlobalPosition - GetGlobalMousePosition();
             }
             else
             {
                 _dragging = false;
-                TryToSnap();
-            }
-        }
-    }
-
-    // method that gets called when the tile is dropped after dragging
-    private void TryToSnap()
-    {
-        foreach (Area2D area in GetOverlappingAreas())
-        {
-            if (area.GetParent() is ISnapAreaForTiles snapArea &&
-                snapArea.TryGetSnapPosition(GlobalPosition, out Vector2 snapPos, out Vector2I snapCoords))
-            {
-                GlobalPosition = snapPos;
-                snapArea.OnTileDropped(this, snapCoords);
-                return;
+                ZIndex = 0;
+                EmitSignal(SignalName.TileVisualDropped, _id, GlobalPosition);
             }
         }
     }

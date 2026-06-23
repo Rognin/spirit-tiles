@@ -1,16 +1,7 @@
-﻿1. Make sure the structure with Tile and TileData makes sense.
-Probably if I move all important-to-logic info about tiles into TileData and 
-just live the visual stuff to Tile itself that'll be fine.
+﻿1. Add color diff between tiles
 
-2. Check if any remaining weirdness persists or if the system is good for now.
-
-2.1 Add check for validity before commiting to the move of a tile
-(e. g. if the new spot is empty)
-(do this at the very start, probably when hexGridDisplay first gets the drop attempt)
-
-2.2 Use the fallback value on an invalid move (cell occupied, out of bounds attempt, etc.)
-
-2.3 Disallow moving tiles on top of other tiles
+2. Decouple data and display further by not passing
+HexGridData to HexGridDisplay - listen to signals through manager
 
 3. Add TileSpawner or something similar.
 
@@ -29,3 +20,7 @@ and I can drag them to the main hexGrid
    more tile interactions are added."
 
 6. Go from there!
+
+ToDecide:
+1. Is it ok for the display to have to know about how the tilelogic is wired?
+Are there alternatives?
