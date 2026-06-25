@@ -27,24 +27,40 @@ public partial class HexGridManager : Node, IHexGrid
 
 	public void Initialize()
 	{
+		_hexGridDisplay.Initialize(_numberOfRows, _numberOfColumns);
 		_hexGridData.Initialize(_numberOfRows, _numberOfColumns);
-		_hexGridDisplay.Initialize(_hexGridData);
 		
 		_hexGridData.CellCreated += OnCellCreated;
+		_hexGridData.CellDestroyed += OnCellDestroyed;
 		_hexGridDisplay.TileDropped += OnTileDropped;
 		
 		// configure snapAreaCollider
 		_hexGridDisplay.UpdateSnapAreaColliderShape();
 		
 		// TEMP: manually adding tiles for testing
-		_hexGridData.CreateBasicTile(0, 0, _waterSharedTile, TileIdAllocator.GetNextId());
-		_hexGridData.CreateBasicTile(2, 2, _mountainSharedTile, TileIdAllocator.GetNextId());
+		// _hexGridData.CreateBasicTile(0, 0, _waterSharedTile, TileIdAllocator.GetNextId());
+		// _hexGridData.CreateBasicTile(2, 2, _mountainSharedTile, TileIdAllocator.GetNextId());
 		// _hexGridData.PrintCurrentCells();
+	}
+
+	public bool FillNextEmptyHexWithTile(TileLogic tile) // returns false if grid is full
+	{
+		return _hexGridData.FillNextEmptyHexWithTile(tile);
+	}
+
+	public int GetEmptyCellCount()
+	{
+		return _hexGridData.GetEmptyCellCount();
 	}
 
 	private void OnCellCreated(int row, int column, TileLogic tile)
 	{
 		_hexGridDisplay.CreateTileVisual(new Vector2I(row, column), tile);
+	}
+
+	private void OnCellDestroyed(int id)
+	{
+		_hexGridDisplay.DestroyTileVisual(id);
 	}
 
 	private void OnTileDropped(int id, bool valid, Vector2I newCoords)

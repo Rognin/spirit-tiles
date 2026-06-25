@@ -2,7 +2,6 @@
 
 public enum TileType
 {
-    Empty,
     Water,
     Fire,
     Mountain,

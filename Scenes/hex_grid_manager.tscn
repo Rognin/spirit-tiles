@@ -1,0 +1,34 @@
+[gd_scene format=3 uid="uid://b1epwgdi44do2"]
+
+[ext_resource type="Script" uid="uid://doj7ot0i6jnvc" path="res://Scripts/HexGrid/HexGridManager.cs" id="1_pwqgu"]
+[ext_resource type="Resource" uid="uid://3mgdp1v48jp3" path="res://Scripts/Tiles/water_tile.tres" id="2_pm734"]
+[ext_resource type="Resource" uid="uid://cwndo6pwp1nhm" path="res://Scripts/Tiles/rock_tile.tres" id="3_4e1ky"]
+[ext_resource type="Script" uid="uid://41qsx6vxegbf" path="res://Scripts/HexGrid/HexGridData.cs" id="4_h4urk"]
+[ext_resource type="Script" uid="uid://fu23j2uagree" path="res://Scripts/HexGrid/HexGridDisplay.cs" id="5_cjm66"]
+[ext_resource type="PackedScene" uid="uid://wnwg33yyrh2i" path="res://Scenes/tile.tscn" id="6_6oyhp"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rlidi"]
+
+[node name="HexGridManager" type="Node2D" unique_id=1654337369 node_paths=PackedStringArray("_hexGridData", "_hexGridDisplay")]
+script = ExtResource("1_pwqgu")
+_numberOfRows = 4
+_numberOfColumns = 7
+_hexGridData = NodePath("HexGridData")
+_hexGridDisplay = NodePath("HexGridDisplay")
+_waterSharedTile = ExtResource("2_pm734")
+_mountainSharedTile = ExtResource("3_4e1ky")
+
+[node name="HexGridData" type="Node" parent="." unique_id=790024836]
+script = ExtResource("4_h4urk")
+
+[node name="HexGridDisplay" type="Node2D" parent="." unique_id=2034592583 node_paths=PackedStringArray("_snapArea", "_snapAreaCollider")]
+script = ExtResource("5_cjm66")
+_tileScene = ExtResource("6_6oyhp")
+_snapArea = NodePath("SnappableArea")
+_snapAreaCollider = NodePath("SnappableArea/CollisionShape2D")
+
+[node name="SnappableArea" type="Area2D" parent="HexGridDisplay" unique_id=865237836]
+collision_layer = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HexGridDisplay/SnappableArea" unique_id=1953904890]
+shape = SubResource("RectangleShape2D_rlidi")

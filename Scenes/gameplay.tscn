@@ -1,49 +1,25 @@
 [gd_scene format=3 uid="uid://nq34ro31abi2"]
 
-[ext_resource type="PackedScene" uid="uid://wnwg33yyrh2i" path="res://Scenes/tile.tscn" id="1_hf1ha"]
 [ext_resource type="Script" uid="uid://duedlpqvr3qh8" path="res://Scripts/Board.cs" id="1_urrcd"]
 [ext_resource type="Script" uid="uid://ckkw2xi8dl375" path="res://Scripts/TileIdAllocator.cs" id="2_puebw"]
-[ext_resource type="Script" uid="uid://doj7ot0i6jnvc" path="res://Scripts/HexGrid/HexGridManager.cs" id="3_urrcd"]
-[ext_resource type="Resource" uid="uid://3mgdp1v48jp3" path="res://Scripts/Tiles/water_tile.tres" id="4_urrcd"]
-[ext_resource type="Resource" uid="uid://cwndo6pwp1nhm" path="res://Scripts/Tiles/rock_tile.tres" id="5_puebw"]
-[ext_resource type="Script" uid="uid://41qsx6vxegbf" path="res://Scripts/HexGrid/HexGridData.cs" id="6_puebw"]
-[ext_resource type="Script" uid="uid://fu23j2uagree" path="res://Scripts/HexGrid/HexGridDisplay.cs" id="7_5h7oy"]
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rlidi"]
+[ext_resource type="PackedScene" uid="uid://b1epwgdi44do2" path="res://Scenes/hex_grid_manager.tscn" id="3_m34ki"]
+[ext_resource type="PackedScene" uid="uid://fd3g33kxv4w1" path="res://Scenes/tile_holder.tscn" id="4_kwrm5"]
 
 [node name="Gameplay" type="Node2D" unique_id=1647816417]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=100863869]
 
-[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "HexGridManagers")]
+[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "HexGridManagers", "TileHolders")]
 script = ExtResource("1_urrcd")
 TileIdAllocator = NodePath("TileIdAllocator")
 HexGridManagers = [NodePath("HexGridManager")]
+TileHolders = [NodePath("TileHolder")]
 
 [node name="TileIdAllocator" type="Node" parent="Board" unique_id=626204293]
 script = ExtResource("2_puebw")
 
-[node name="HexGridManager" type="Node2D" parent="Board" unique_id=2046420377 node_paths=PackedStringArray("_hexGridData", "_hexGridDisplay")]
-position = Vector2(-360, -196)
-script = ExtResource("3_urrcd")
-_numberOfRows = 4
-_numberOfColumns = 7
-_hexGridData = NodePath("HexGridData")
-_hexGridDisplay = NodePath("HexGridDisplay")
-_waterSharedTile = ExtResource("4_urrcd")
-_mountainSharedTile = ExtResource("5_puebw")
+[node name="HexGridManager" parent="Board" unique_id=1654337369 instance=ExtResource("3_m34ki")]
+position = Vector2(-290, -190)
 
-[node name="HexGridData" type="Node" parent="Board/HexGridManager" unique_id=264340632]
-script = ExtResource("6_puebw")
-
-[node name="HexGridDisplay" type="Node2D" parent="Board/HexGridManager" unique_id=227776937 node_paths=PackedStringArray("_snapArea", "_snapAreaCollider")]
-script = ExtResource("7_5h7oy")
-_tileScene = ExtResource("1_hf1ha")
-_snapArea = NodePath("SnappableArea")
-_snapAreaCollider = NodePath("SnappableArea/CollisionShape2D")
-
-[node name="SnappableArea" type="Area2D" parent="Board/HexGridManager/HexGridDisplay" unique_id=2082563250]
-collision_layer = 2
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Board/HexGridManager/HexGridDisplay/SnappableArea" unique_id=253931912]
-shape = SubResource("RectangleShape2D_rlidi")
+[node name="TileHolder" parent="Board" unique_id=1646061118 instance=ExtResource("4_kwrm5")]
+position = Vector2(-198, 129.565)

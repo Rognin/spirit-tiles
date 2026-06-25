@@ -9,9 +9,9 @@ public partial class HexGridData : Node
     public int NumberOfRows { get; set; }
     public int NumberOfColumns { get; set; }
     
-    [Signal] public delegate void CellCreatedEventHandler(int row, int column, TileLogic newTile);
+    [Signal] public delegate void CellCreatedEventHandler(int row, int column, TileLogic newTile); // replace with just the visual-related data later
     [Signal] public delegate void CellMovedEventHandler(int rowFrom, int colFrom, int rowTo, int columnTo, TileLogic Tile);
-    [Signal] public delegate void CellDestroyedEventHandler(int row, int column);
+    [Signal] public delegate void CellDestroyedEventHandler(int id);
     
     public void Initialize(int numberOfRows, int numberOfColumns)
     {
@@ -87,10 +87,29 @@ public partial class HexGridData : Node
         EmitSignal(SignalName.CellCreated, row, col, newTile);
     }
 
+    public void CreateTile(int row, int col, TileLogic tile)
+    {
+        if (tile == null)
+        {
+            GD.PrintErr("HexGridData.AddTile called with null MyTileData");
+            return;
+        }
+        if (!_cells[new Vector2I(row, col)].IsEmpty())
+        {
+            GD.PrintErr($"There's already a cell at {row}, {col}");
+            return;
+        }
+
+        _cells[new Vector2I(row, col)].Tile = tile;
+        EmitSignal(SignalName.CellCreated, row, col, tile);
+    }
+
     public void DestroyTile(int row, int col)
     {
+        TileLogic toDestroy = _cells[new Vector2I(row, col)].Tile;
+        int id = toDestroy.Id;
         _cells[new Vector2I(row, col)].Tile = null;
-        EmitSignal(SignalName.CellDestroyed, row, col);
+        EmitSignal(SignalName.CellDestroyed, id);
     }
 
     public void MoveTile(int id, int rowTo, int colTo)
@@ -115,6 +134,50 @@ public partial class HexGridData : Node
         }
         _cells[to].Tile = tileToMove;
         EmitSignal(SignalName.CellMoved, from.X, from.Y, to.X, to.Y, tileToMove);
+    }
+
+    public bool FillNextEmptyHexWithTile(TileLogic tile)
+    {
+        bool haveEmptyCell = GetFirstEmptyCell(out Vector2I coords);
+        if (haveEmptyCell)
+        {
+            CreateTile(coords.X, coords.Y, tile);
+            return true;
+        }
+        return false;
+    }
+
+    public int GetEmptyCellCount()
+    {
+        int count = 0;
+        for (int i = 0; i < NumberOfRows; i++)
+        {
+            for (int j = 0; j < NumberOfColumns; j++)
+            {
+                if (_cells[new Vector2I(i, j)].IsEmpty())
+                {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    public bool GetFirstEmptyCell(out Vector2I coords)
+    {
+        for (int i = 0; i < NumberOfRows; i++)
+        {
+            for (int j = 0; j < NumberOfColumns; j++)
+            {
+                if (_cells[new Vector2I(i, j)].IsEmpty())
+                {
+                    coords = new Vector2I(i, j);
+                    return true;
+                }
+            }
+        }
+        coords = Vector2I.Zero;
+        return false;
     }
 
     public Dictionary<Vector2I, GridCellData> GetCurrentCells()

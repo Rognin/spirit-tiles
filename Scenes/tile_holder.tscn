@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://fd3g33kxv4w1"]
+
+[ext_resource type="Script" uid="uid://d1cxpp6dee7s5" path="res://Scripts/TileHolder/TileHolder.cs" id="1_kqdyy"]
+[ext_resource type="Resource" uid="uid://cwndo6pwp1nhm" path="res://Scripts/Tiles/rock_tile.tres" id="2_xfp3t"]
+[ext_resource type="Resource" uid="uid://3mgdp1v48jp3" path="res://Scripts/Tiles/water_tile.tres" id="3_drsrn"]
+[ext_resource type="PackedScene" uid="uid://b1epwgdi44do2" path="res://Scenes/hex_grid_manager.tscn" id="4_cqhog"]
+
+[node name="TileHolder" type="Node2D" unique_id=1646061118 node_paths=PackedStringArray("_hexGridManager")]
+script = ExtResource("1_kqdyy")
+_hexGridManager = NodePath("HexGridManager")
+_tilesToSpawn = Array[Object]([ExtResource("2_xfp3t"), ExtResource("3_drsrn")])
+
+[node name="HexGridManager" parent="." unique_id=1654337369 instance=ExtResource("4_cqhog")]
+_numberOfRows = 1
+_numberOfColumns = 5

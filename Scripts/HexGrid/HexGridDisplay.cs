@@ -12,6 +12,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     public const float TILE_EDGE_SIZE = 44.325f;
     public static readonly float TILE_WIDTH = TILE_EDGE_SIZE * MathF.Sqrt(3);
     public const float TILE_HEIGHT = TILE_EDGE_SIZE * 2;
+    [Export] float maxSnapDistance = TILE_HEIGHT/2;
     
     private int _numberOfRows;
     private int _numberOfColumns;
@@ -27,19 +28,10 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     [Signal] public delegate void TileDroppedEventHandler(int id, bool valid, Vector2I coords);
     // [Signal] public delegate void TileMovedAwayEventHandler(int id);
-    public void Initialize(HexGridData hexGridData)
+    public void Initialize(int numberOfRows, int numberOfColumns)
     {
-        _numberOfRows = hexGridData.NumberOfRows;
-        _numberOfColumns = hexGridData.NumberOfColumns;
-        foreach (var kvp in hexGridData.GetCurrentCells())
-        {
-            GridCellData cell = kvp.Value;
-            Vector2I coords = kvp.Key;
-            if (!cell.IsEmpty())
-            {
-                CreateTileVisual(coords, cell.Tile);
-            }
-        }
+        _numberOfRows = numberOfRows;
+        _numberOfColumns = numberOfColumns;
         
         // fill the array of hex center coords
         BuildCellCentersDict();
@@ -55,7 +47,14 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         _placedTiles[tile.Id] = tileVisual;
         // subscribe to the onDrop signal
         tileVisual.TileVisualDropped += OnTileDropped;
-    } 
+    }
+
+    public void DestroyTileVisual(int id)
+    {
+        TileVisual toRemove = _placedTiles[id];
+        _placedTiles.Remove(id);
+        toRemove.QueueFree();
+    }
 
     private void BuildCellCentersDict()
     {
@@ -164,8 +163,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
             snapCoords = Vector2I.Zero;
             return false;
         }
-
-        float maxSnapDistance = TILE_WIDTH/2;
+        
         if (minDist > maxSnapDistance * maxSnapDistance) // dropped out of grid
         {
             snapCoords = Vector2I.Zero;

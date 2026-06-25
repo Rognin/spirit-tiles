@@ -1,23 +1,7 @@
-﻿1. Add color diff between tiles
-
-2. Decouple data and display further by not passing
-HexGridData to HexGridDisplay - listen to signals through manager
-
-3. Add TileSpawner or something similar.
+﻿Make Tiles moveable between grids 
 
 4. Get to the point where I have a set of tiles being spawned (on button click or just infinite?) 
 and I can drag them to the main hexGrid
-
-5. Think about the architecture. Here's an issue Claude pointed out:
-"Layering inversion. The architecture intends data → display, mediated by
-   the manager, with display "driven by" the manager. But in practice the    
-   lowest-level visual object (Tile) is what initiates a move by calling into
-   the display layer directly, which bubbles up to the manager, which then   
-   reaches back down to mutate state living on the Tile itself. That's three 
-   hops for one logical action, and the object that should be most "dumb"    
-   (the tile) ends up holding the authoritative position state that the top  
-   layer reaches in and overwrites. This will get harder to reason about as  
-   more tile interactions are added."
 
 6. Go from there!
 

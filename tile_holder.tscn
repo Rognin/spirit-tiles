@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://dbsl813qgvbc2"]
+
+[ext_resource type="PackedScene" uid="uid://b1epwgdi44do2" path="res://Scenes/hex_grid_manager.tscn" id="1_1amia"]
+
+[node name="HexGridManager" unique_id=1654337369 instance=ExtResource("1_1amia")]
+_numberOfRows = 1
+_numberOfColumns = 5
