@@ -1,5 +1,12 @@
 ﻿Make Tiles moveable between grids 
 
+1. Change to coordinator subscribing to tile signal
+instead of long call chain
+
+2. 
+
+...
+
 4. Get to the point where I have a set of tiles being spawned (on button click or just infinite?) 
 and I can drag them to the main hexGrid
 

@@ -47,7 +47,7 @@ public partial class HexGridData : Node
         return Vector2I.Zero;
     }
 
-    public bool ValidateMove(int id, bool valid, Vector2I newCoords, out Vector2I correctCoords)
+    public bool ValidateSameGridMove(int id, bool valid, Vector2I newCoords, out Vector2I correctCoords)
     {
         // check that there's no tile already at new position
         if (!_cells[newCoords].IsEmpty())
@@ -65,6 +65,19 @@ public partial class HexGridData : Node
         {
             // correct the position to where tile is before move
             correctCoords = GetTileCoordinatesById(id);
+            return false;
+        }
+    }
+
+    public bool ValidateDifferentGridMove(Vector2I coords)
+    {
+        // check if cell empty
+        if (_cells[coords].IsEmpty())
+        {
+            return true;
+        }
+        else
+        {
             return false;
         }
     }
@@ -112,7 +125,7 @@ public partial class HexGridData : Node
         EmitSignal(SignalName.CellDestroyed, id);
     }
 
-    public void MoveTile(int id, int rowTo, int colTo)
+    public void MoveTileSameGrid(int id, int rowTo, int colTo)
     {
         Vector2I from = GetTileCoordinatesById(id);
         Vector2I to = new Vector2I(rowTo, colTo);
@@ -134,6 +147,19 @@ public partial class HexGridData : Node
         }
         _cells[to].Tile = tileToMove;
         EmitSignal(SignalName.CellMoved, from.X, from.Y, to.X, to.Y, tileToMove);
+    }
+
+    public TileLogic SendOffTileToDifferentGrid(int id)
+    {
+        Vector2I coords = GetTileCoordinatesById(id);
+        TileLogic tileToMove = _cells[coords].Tile;
+        _cells[coords].Tile = null;
+        return tileToMove;
+    }
+
+    public void ReceiveTileAfterMoveFromDifferentGrid(Vector2I coords, TileLogic tile)
+    {
+        _cells[coords].Tile = tile;
     }
 
     public bool FillNextEmptyHexWithTile(TileLogic tile)

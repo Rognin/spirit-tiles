@@ -27,6 +27,8 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     private Dictionary<Vector2I, Vector2> _cellCenters = new Dictionary<Vector2I, Vector2>();
     
     [Signal] public delegate void TileDroppedEventHandler(int id, bool valid, Vector2I coords);
+    [Signal] public delegate void ForwardTileDropEventHandler(int id, Vector2 globalPos);
+    
     // [Signal] public delegate void TileMovedAwayEventHandler(int id);
     public void Initialize(int numberOfRows, int numberOfColumns)
     {
@@ -45,8 +47,6 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         AddChild(tileVisual);
         tileVisual.Initialize(tile.Id, tile.SharedTileData);
         _placedTiles[tile.Id] = tileVisual;
-        // subscribe to the onDrop signal
-        tileVisual.TileVisualDropped += OnTileDropped;
     }
 
     public void DestroyTileVisual(int id)
@@ -82,7 +82,18 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     // tile placement related methods
 
-    public void OnTileDropped(int id, Vector2 globalPos)
+    public void NotifyAboutDropFromTileVisual(int id, Vector2 globalPos)
+    {
+        GD.Print("step 1: display forwards to manager");
+        ForwardTileDropped(id, globalPos);
+    }
+    
+    private void ForwardTileDropped(int id, Vector2 globalPos)
+    {
+        EmitSignal(SignalName.ForwardTileDrop, id, globalPos);
+    }
+
+    public void MoveTileWithinThisGrid(int id, Vector2 globalPos)
     {
         bool validDrop = TryGetSnapPosition(globalPos, out Vector2I snapCoords);
         
@@ -92,6 +103,21 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     public void CancelMove(int id, Vector2I correctionCoords)
     {
         PlaceTileVisualAtCoords(id, correctionCoords);
+    }
+
+    public TileVisual SendOffVisual(int id)
+    {
+        TileVisual toSend = _placedTiles[id];
+        _placedTiles.Remove(id);
+        RemoveChild(toSend);
+        return toSend;
+    }
+
+    public void ReceiveNewTileVisual(int id, TileVisual visual, Vector2I coords)
+    {
+        _placedTiles.Add(id, visual);
+        AddChild(visual);
+        PlaceTileVisualAtCoords(id, coords);
     }
 
     public void PlaceTileVisualAtCoords(int id, Vector2I newCoords)

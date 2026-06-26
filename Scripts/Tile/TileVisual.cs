@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Spirittiles.Scripts.HexGrid;
 
 namespace Spirittiles.Scripts;
 
@@ -62,7 +63,14 @@ public partial class TileVisual : Area2D
                 {
                     _dragging = false;
                     ZIndex = 0;
-                    EmitSignal(SignalName.TileVisualDropped, _id, GlobalPosition);
+                    foreach (Area2D area in GetOverlappingAreas())
+                    {
+                        if (area.GetParent() is ISnapAreaForTiles snapArea)
+                        {
+                            GD.Print("TileVisual started sequence after drop");
+                            snapArea.NotifyAboutDropFromTileVisual(_id, GlobalPosition);
+                        }
+                    }
                 }
             }
         }

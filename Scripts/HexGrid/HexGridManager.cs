@@ -2,6 +2,7 @@ using System;
 using Godot;
 using Godot.Collections;
 using Godot.NativeInterop;
+using Spirittiles.Scripts.HexGrid;
 
 namespace Spirittiles.Scripts;
 
@@ -14,11 +15,9 @@ public partial class HexGridManager : Node, IHexGrid
 	[Export] private HexGridData _hexGridData;
 	[Export] private HexGridDisplay _hexGridDisplay;
 	
-	[Export] private SharedTileData _waterSharedTile;
-	[Export] private SharedTileData _mountainSharedTile;
-	
-	//
-	public TileIdAllocator TileIdAllocator { get; set; } // set by board
+	[Signal] public delegate void TileCreatedEventHandler(int id);
+	[Signal] public delegate void TileDestroyedEventHandler(int id);
+	[Signal] public delegate void ForwardTileDropEventHandler(int id, Vector2 globalPos);
 	
 	public override void _Ready()
 	{
@@ -30,12 +29,15 @@ public partial class HexGridManager : Node, IHexGrid
 		_hexGridDisplay.Initialize(_numberOfRows, _numberOfColumns);
 		_hexGridData.Initialize(_numberOfRows, _numberOfColumns);
 		
-		_hexGridData.CellCreated += OnCellCreated;
+		_hexGridData.CellCreated += OnTileCreated;
 		_hexGridData.CellDestroyed += OnCellDestroyed;
 		_hexGridDisplay.TileDropped += OnTileDropped;
+		_hexGridDisplay.ForwardTileDrop += OnForwardTileDrop;
 		
 		// configure snapAreaCollider
 		_hexGridDisplay.UpdateSnapAreaColliderShape();
+		
+		this.AddToGroup("HexGridManagers");
 		
 		// TEMP: manually adding tiles for testing
 		// _hexGridData.CreateBasicTile(0, 0, _waterSharedTile, TileIdAllocator.GetNextId());
@@ -53,21 +55,23 @@ public partial class HexGridManager : Node, IHexGrid
 		return _hexGridData.GetEmptyCellCount();
 	}
 
-	private void OnCellCreated(int row, int column, TileLogic tile)
+	private void OnTileCreated(int row, int column, TileLogic tile)
 	{
 		_hexGridDisplay.CreateTileVisual(new Vector2I(row, column), tile);
+		EmitSignal(SignalName.TileCreated, tile.Id);
 	}
 
 	private void OnCellDestroyed(int id)
 	{
 		_hexGridDisplay.DestroyTileVisual(id);
+		EmitSignal(SignalName.TileDestroyed, id);
 	}
 
 	private void OnTileDropped(int id, bool valid, Vector2I newCoords)
 	{
 		// step 1: validate move
 
-		if (!_hexGridData.ValidateMove(id, valid, newCoords, out Vector2I correctCoords))
+		if (!_hexGridData.ValidateSameGridMove(id, valid, newCoords, out Vector2I correctCoords))
 		{
 			_hexGridDisplay.CancelMove(id, correctCoords);
 			return;
@@ -75,12 +79,52 @@ public partial class HexGridManager : Node, IHexGrid
 		
 		// step 2: if move valid, update HexGridData
 		
-		_hexGridData.MoveTile(id, newCoords.X, newCoords.Y);
+		_hexGridData.MoveTileSameGrid(id, newCoords.X, newCoords.Y);
 		
 		// step 3: if move valid, snap the tileVisual
 
 		_hexGridDisplay.PlaceTileVisualAtCoords(id, correctCoords);
 
+	}
+
+	private void OnForwardTileDrop(int id, Vector2 globalPos)
+	{
+		GD.Print("Step 2: manager forwards to coordinator");
+		EmitSignal(SignalName.ForwardTileDrop, id, globalPos);
+	}
+
+	public void TileMoveWithinThisGrid(int id, Vector2 newPos) // tile moved from this grid to this grid
+	{
+		// call the chain of methods for one-grid move
+		_hexGridDisplay.MoveTileWithinThisGrid(id, newPos);
+	}
+
+	public bool CheckIfTileMoveToWorldPosValid(Vector2 worldPos, out Vector2I newTileCoords)
+	{
+		bool valid = false;
+		newTileCoords = Vector2I.Zero;
+		if (_hexGridDisplay.TryGetSnapPosition(worldPos, out Vector2I coords))
+		{
+			if (_hexGridData.ValidateDifferentGridMove(coords))
+			{
+				newTileCoords = coords;
+				valid = true;
+			}
+		}
+		return valid;
+	}
+
+	public void MoveTileToDifferentGrid(int id, out TileLogic tile, out TileVisual visual)
+	{
+		tile = _hexGridData.SendOffTileToDifferentGrid(id);
+		visual = _hexGridDisplay.SendOffVisual(id);
+	}
+
+	public void AddTileAfterMoveFromDifferentGrid(int id, Vector2I coords, TileLogic tile, TileVisual visual)
+	{
+		_hexGridData.ReceiveTileAfterMoveFromDifferentGrid(coords, tile);
+		
+		_hexGridDisplay.ReceiveNewTileVisual(id, visual, coords);
 	}
 
 	public override void _Process(double delta)

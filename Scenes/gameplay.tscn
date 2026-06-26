@@ -4,22 +4,27 @@
 [ext_resource type="Script" uid="uid://ckkw2xi8dl375" path="res://Scripts/TileIdAllocator.cs" id="2_puebw"]
 [ext_resource type="PackedScene" uid="uid://b1epwgdi44do2" path="res://Scenes/hex_grid_manager.tscn" id="3_m34ki"]
 [ext_resource type="PackedScene" uid="uid://fd3g33kxv4w1" path="res://Scenes/tile_holder.tscn" id="4_kwrm5"]
+[ext_resource type="Script" uid="uid://djtnmmbkne1fv" path="res://Scripts/HexGrid/TileMoveCoordinator.cs" id="5_r8bcl"]
 
 [node name="Gameplay" type="Node2D" unique_id=1647816417]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=100863869]
 
-[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "HexGridManagers", "TileHolders")]
+[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "HexGridManagers", "TileHolders", "TileMoveCoordinator")]
 script = ExtResource("1_urrcd")
 TileIdAllocator = NodePath("TileIdAllocator")
 HexGridManagers = [NodePath("HexGridManager")]
 TileHolders = [NodePath("TileHolder")]
+TileMoveCoordinator = NodePath("TileMoveCoordinator")
 
 [node name="TileIdAllocator" type="Node" parent="Board" unique_id=626204293]
 script = ExtResource("2_puebw")
 
-[node name="HexGridManager" parent="Board" unique_id=1654337369 instance=ExtResource("3_m34ki")]
+[node name="HexGridManager" parent="Board" unique_id=1654337369 groups=["HexGridManagers"] instance=ExtResource("3_m34ki")]
 position = Vector2(-290, -190)
 
 [node name="TileHolder" parent="Board" unique_id=1646061118 instance=ExtResource("4_kwrm5")]
 position = Vector2(-198, 129.565)
+
+[node name="TileMoveCoordinator" type="Node2D" parent="Board" unique_id=615933670]
+script = ExtResource("5_r8bcl")

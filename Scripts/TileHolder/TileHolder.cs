@@ -3,7 +3,7 @@ using Godot.Collections;
 
 namespace Spirittiles.Scripts.TileHolder;
 
-public partial class TileHolder : Node
+public partial class TileHolder : Node2D
 {
 	public TileIdAllocator TileIdAllocator { get; set; } // set by board
 	[Export] private HexGridManager _hexGridManager;
@@ -21,7 +21,8 @@ public partial class TileHolder : Node
 	{
 		if (Input.IsActionJustPressed("debug_button_1"))
 		{
-			int newTilesAmount = _hexGridManager.GetEmptyCellCount();
+			// int newTilesAmount = _hexGridManager.GetEmptyCellCount();
+			int newTilesAmount = 2;
 			Array<TileLogic> newTiles = _tileSpawner.GetNewTiles(newTilesAmount);
 			for (int i = 0; i < newTilesAmount; i++)
 			{

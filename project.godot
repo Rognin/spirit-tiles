@@ -19,6 +19,10 @@ config/icon="res://icon.svg"
 
 project/assembly_name="Spirit tiles"
 
+[global_group]
+
+HexGridManagers="A group that contains all hexgridmanagers"
+
 [input]
 
 debug_button_1={
