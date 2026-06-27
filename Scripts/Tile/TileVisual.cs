@@ -1,4 +1,5 @@
 ﻿using Godot;
+using Godot.Collections;
 using Spirittiles.Scripts.HexGrid;
 
 namespace Spirittiles.Scripts;
@@ -13,7 +14,7 @@ public partial class TileVisual : Area2D
     private Vector2 _dragStartOffset = Vector2.Zero;
     
     // signals
-    [Signal] public delegate void TileVisualDroppedEventHandler(int id, Vector2 worldPos);
+    [Signal] public delegate void TileVisualDroppedOutsideOfAnyGridEventHandler(int id, Vector2 globalPos);
 
     public override void _Ready()
     {
@@ -30,6 +31,15 @@ public partial class TileVisual : Area2D
         _sprite.Texture = data.Texture;
         _sprite.Modulate = data.Color;
         _id = id;
+        
+        // debug label with id
+        Label label = new Label
+        {
+            Text = id.ToString(),
+            Position = new Vector2(-5, -10),
+            ZIndex = 10
+        };
+        AddChild(label);
     }
 
     public override void _Process(double delta)
@@ -61,16 +71,24 @@ public partial class TileVisual : Area2D
             {
                 if (!mouseEvent.Pressed)
                 {
+                    // debug message
+                    int listenerCount = GetSignalConnectionList(SignalName.TileVisualDroppedOutsideOfAnyGrid).Count;
+                    // GD.Print($"Listeners on drop signal: {listenerCount}");
+                    
                     _dragging = false;
                     ZIndex = 0;
                     foreach (Area2D area in GetOverlappingAreas())
                     {
                         if (area.GetParent() is ISnapAreaForTiles snapArea)
                         {
-                            GD.Print("TileVisual started sequence after drop");
+                            // GD.Print("TileVisual started sequence after drop");
                             snapArea.NotifyAboutDropFromTileVisual(_id, GlobalPosition);
+                            return;
                         }
                     }
+                    // if we're here, player let go while not above a snap area
+                    // Notify whoever is responsible for this visual about the fact
+                    EmitSignal(SignalName.TileVisualDroppedOutsideOfAnyGrid, _id, GlobalPosition);
                 }
             }
         }

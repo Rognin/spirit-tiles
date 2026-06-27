@@ -89,11 +89,11 @@ public partial class HexGridManager : Node, IHexGrid
 
 	private void OnForwardTileDrop(int id, Vector2 globalPos)
 	{
-		GD.Print("Step 2: manager forwards to coordinator");
+		// GD.Print("Step 2: manager forwards to coordinator");
 		EmitSignal(SignalName.ForwardTileDrop, id, globalPos);
 	}
 
-	public void TileMoveWithinThisGrid(int id, Vector2 newPos) // tile moved from this grid to this grid
+	public void MoveTileWithinThisGrid(int id, Vector2 newPos) // tile moved from this grid to this grid
 	{
 		// call the chain of methods for one-grid move
 		_hexGridDisplay.MoveTileWithinThisGrid(id, newPos);
@@ -103,8 +103,10 @@ public partial class HexGridManager : Node, IHexGrid
 	{
 		bool valid = false;
 		newTileCoords = Vector2I.Zero;
+		// check if display has the position inside it (should always be true but just in case)
 		if (_hexGridDisplay.TryGetSnapPosition(worldPos, out Vector2I coords))
 		{
+			// check if data says it's all good
 			if (_hexGridData.ValidateDifferentGridMove(coords))
 			{
 				newTileCoords = coords;
@@ -112,6 +114,12 @@ public partial class HexGridManager : Node, IHexGrid
 			}
 		}
 		return valid;
+	}
+
+	public void CancelMove(int id)
+	{
+		Vector2I coords = _hexGridData.GetTileCoordinatesById(id);
+		_hexGridDisplay.CancelMove(id, coords);
 	}
 
 	public void MoveTileToDifferentGrid(int id, out TileLogic tile, out TileVisual visual)

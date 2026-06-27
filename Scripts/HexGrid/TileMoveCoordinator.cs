@@ -61,21 +61,21 @@ public partial class TileMoveCoordinator : Node2D
 
 		if (_gridByTileId[id] == gridManager)
 		{
-			gridManager.TileMoveWithinThisGrid(id, globalPos);
+			gridManager.MoveTileWithinThisGrid(id, globalPos);
 		}
 		else
 		{
-			GD.Print("Step 3: coordinator starts movement between grids");
+			// GD.Print("Step 3: coordinator starts movement between grids");
 			HexGridManager from = _gridByTileId[id];
 			HexGridManager to = gridManager;
 
 			if (to.CheckIfTileMoveToWorldPosValid(globalPos, out Vector2I newTileCoords))
 			{
 				// move valid. Remove tile from first grid, add it to second
-				GD.Print("Step 4: move valid, removing tile from old grid");
+				// GD.Print("Step 4: move valid, removing tile from old grid");
 				from.MoveTileToDifferentGrid(id, out TileLogic tile, out TileVisual visual);
 				
-				GD.Print("Step 5: move tile to different grid");
+				// GD.Print("Step 5: move tile to different grid");
 				to.AddTileAfterMoveFromDifferentGrid(id, newTileCoords, tile, visual);
 				
 				// update the id-hexGridManager link for the coordinator
@@ -84,6 +84,7 @@ public partial class TileMoveCoordinator : Node2D
 			else
 			{
 				// move invalid. Snap cell back to where it came from
+				from.CancelMove(id);
 			}
 		}
 	}

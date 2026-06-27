@@ -31,7 +31,7 @@ public partial class HexGridData : Node
         }
     }
 
-    private Vector2I GetTileCoordinatesById(int id)
+    public Vector2I GetTileCoordinatesById(int id)
     {
         foreach (var kvp in _cells)
         {
@@ -217,12 +217,16 @@ public partial class HexGridData : Node
         {
             if (!kvp.Value.IsEmpty())
             {
-                GD.Print(kvp.Value.Tile.SharedTileData.Type);
+                GD.Print($"HexGridData {this}: tile with id {kvp.Value.Tile.Id} at {kvp.Key}");
             }
-            else
-            {
-                GD.Print($"No cell at {kvp.Key}");
-            }
+        }
+    }
+    
+    public override void _Process(double delta)
+    {
+        if (Input.IsActionJustPressed("debug_button_2"))
+        {
+            PrintCurrentCells();
         }
     }
 }

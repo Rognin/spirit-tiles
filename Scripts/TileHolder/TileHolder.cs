@@ -21,10 +21,10 @@ public partial class TileHolder : Node2D
 	{
 		if (Input.IsActionJustPressed("debug_button_1"))
 		{
-			// int newTilesAmount = _hexGridManager.GetEmptyCellCount();
-			int newTilesAmount = 2;
+			int newTilesAmount = _hexGridManager.GetEmptyCellCount();
+			// int newTilesAmount = 2;
 			Array<TileLogic> newTiles = _tileSpawner.GetNewTiles(newTilesAmount);
-			for (int i = 0; i < newTilesAmount; i++)
+			for (int i = 0; i < newTiles.Count; i++)
 			{
 				TileLogic tileToPlace = newTiles[i];
 				_hexGridManager.FillNextEmptyHexWithTile(tileToPlace);

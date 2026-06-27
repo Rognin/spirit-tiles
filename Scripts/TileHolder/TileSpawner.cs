@@ -39,9 +39,13 @@ public partial class TileSpawner () : Node
 		Array<TileLogic> newTiles = new Array<TileLogic>();
 		for (int i = 0; i < amount; i++)
 		{
+			if (_currentSpawnIndex >= _tileArray.Count)
+			{
+				GD.Print("NoMoreTilesInTheBag");
+				break;
+			}
 			newTiles.Add(_tileArray[_currentSpawnIndex]);
 			_currentSpawnIndex++;
-			_currentSpawnIndex %= _tileArray.Count;
 		}
 		return newTiles;
 	}

@@ -1,9 +1,6 @@
 ﻿Make Tiles moveable between grids 
 
-1. Change to coordinator subscribing to tile signal
-instead of long call chain
-
-2. 
+1. Implement validity check
 
 ...
 

@@ -47,6 +47,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         AddChild(tileVisual);
         tileVisual.Initialize(tile.Id, tile.SharedTileData);
         _placedTiles[tile.Id] = tileVisual;
+        tileVisual.TileVisualDroppedOutsideOfAnyGrid += OnTileVisualDroppedOutsideAllGrids;
     }
 
     public void DestroyTileVisual(int id)
@@ -84,7 +85,13 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
 
     public void NotifyAboutDropFromTileVisual(int id, Vector2 globalPos)
     {
-        GD.Print("step 1: display forwards to manager");
+        // GD.Print("step 1: display forwards to manager");
+        ForwardTileDropped(id, globalPos);
+    }
+
+    public void OnTileVisualDroppedOutsideAllGrids(int id, Vector2 globalPos)
+    {
+        GD.Print($"{this} received outsideAnyGrid signal from visual with id {id}");
         ForwardTileDropped(id, globalPos);
     }
     
@@ -108,6 +115,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     public TileVisual SendOffVisual(int id)
     {
         TileVisual toSend = _placedTiles[id];
+        toSend.TileVisualDroppedOutsideOfAnyGrid -= OnTileVisualDroppedOutsideAllGrids;
         _placedTiles.Remove(id);
         RemoveChild(toSend);
         return toSend;
@@ -117,6 +125,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     {
         _placedTiles.Add(id, visual);
         AddChild(visual);
+        visual.TileVisualDroppedOutsideOfAnyGrid += OnTileVisualDroppedOutsideAllGrids;
         PlaceTileVisualAtCoords(id, coords);
     }
 
@@ -199,10 +208,25 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
         snapCoords = new Vector2I(closestCellCoord.X, closestCellCoord.Y);
         return true;
     }
-    // called when a tile is moved from one cell to another
-    // including to a different snap area
-    /*public void OnTileMovedAway(int id)
+    
+    // debug method to check if TileVisual's signal is wired correctly
+    /*private bool IsTileWired(TileVisual tv)
     {
-        EmitSignal(SignalName.TileMoved, tileVisual);
+        return tv.IsConnected(
+            TileVisual.SignalName.TileVisualDroppedOutsideOfAnyGrid,
+            Callable.From<int, Vector2>(OnTileVisualDroppedOutsideAllGrids)
+        );
+    }*/
+    
+    /*public override void _Process(double delta)
+    {
+        if (Input.IsActionJustPressed("debug_button_2"))
+        {
+            foreach (TileVisual visual in _placedTiles.Values)
+            {
+                bool isWired = IsTileWired(visual);
+                GD.Print($"Tile {visual} is wired to {this}: {isWired}");
+            }
+        }
     }*/
 }
