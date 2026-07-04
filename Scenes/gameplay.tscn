@@ -4,18 +4,29 @@
 [ext_resource type="Script" uid="uid://ckkw2xi8dl375" path="res://Scripts/TileIdAllocator.cs" id="2_puebw"]
 [ext_resource type="PackedScene" uid="uid://b1epwgdi44do2" path="res://Scenes/hex_grid_manager.tscn" id="3_m34ki"]
 [ext_resource type="PackedScene" uid="uid://fd3g33kxv4w1" path="res://Scenes/tile_holder.tscn" id="4_kwrm5"]
+[ext_resource type="Resource" uid="uid://cwndo6pwp1nhm" path="res://Scripts/Tiles/rock_tile.tres" id="5_puebw"]
 [ext_resource type="Script" uid="uid://djtnmmbkne1fv" path="res://Scripts/HexGrid/TileMoveCoordinator.cs" id="5_r8bcl"]
+[ext_resource type="Resource" uid="uid://3mgdp1v48jp3" path="res://Scripts/Tiles/water_tile.tres" id="6_5h7oy"]
+[ext_resource type="Resource" uid="uid://bdyhgrh2awj6x" path="res://Scripts/Tiles/forest_tile.tres" id="7_ltefv"]
+[ext_resource type="Resource" uid="uid://byh4rch8ln6pi" path="res://Scripts/Tiles/sand_tile.tres" id="8_rg35f"]
+[ext_resource type="Script" uid="uid://dcp2epg3xx4ed" path="res://Scripts/PatternChecking/PatternOwner.cs" id="10_ltefv"]
+[ext_resource type="Resource" uid="uid://c7tpp8nhlgw1l" path="res://Scripts/Patterns/petting_zoo_shape.tres" id="11_rg35f"]
+[ext_resource type="Resource" uid="uid://bwvyarqlujtcv" path="res://Scripts/Patterns/triangle_shape.tres" id="12_rg35f"]
+[ext_resource type="Script" uid="uid://lwdxnliakk5a" path="res://Scripts/PatternChecking/PatternChecker.cs" id="13_jb71e"]
 
 [node name="Gameplay" type="Node2D" unique_id=1647816417]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=100863869]
 
-[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "HexGridManagers", "TileHolders", "TileMoveCoordinator")]
+[node name="Board" type="Node2D" parent="." unique_id=1641405995 node_paths=PackedStringArray("TileIdAllocator", "ScoringGrid", "HexGridManagers", "TileHolders", "TileMoveCoordinator", "PatternChecker")]
 script = ExtResource("1_urrcd")
 TileIdAllocator = NodePath("TileIdAllocator")
+ScoringGrid = NodePath("HexGridManager")
 HexGridManagers = [NodePath("HexGridManager")]
 TileHolders = [NodePath("TileHolder")]
 TileMoveCoordinator = NodePath("TileMoveCoordinator")
+PatternChecker = NodePath("PatternChecker")
+Patterns = Array[Object]([ExtResource("11_rg35f"), ExtResource("12_rg35f")])
 
 [node name="TileIdAllocator" type="Node" parent="Board" unique_id=626204293]
 script = ExtResource("2_puebw")
@@ -25,6 +36,18 @@ position = Vector2(-290, -190)
 
 [node name="TileHolder" parent="Board" unique_id=1646061118 instance=ExtResource("4_kwrm5")]
 position = Vector2(-198, 129.565)
+_tilesToSpawn = Array[Object]([ExtResource("5_puebw"), ExtResource("6_5h7oy"), ExtResource("7_ltefv"), ExtResource("8_rg35f")])
 
 [node name="TileMoveCoordinator" type="Node2D" parent="Board" unique_id=615933670]
 script = ExtResource("5_r8bcl")
+
+[node name="PatternOwner" type="Node2D" parent="Board" unique_id=793797983]
+script = ExtResource("10_ltefv")
+_pattern = ExtResource("11_rg35f")
+
+[node name="PatternOwner2" type="Node2D" parent="Board" unique_id=1884740586]
+script = ExtResource("10_ltefv")
+_pattern = ExtResource("12_rg35f")
+
+[node name="PatternChecker" type="Node" parent="Board" unique_id=2032006454]
+script = ExtResource("13_jb71e")

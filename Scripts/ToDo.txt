@@ -1,14 +1,23 @@
-﻿Make Tiles moveable between grids 
+﻿
+Implement patterns and pattern matching
 
-1. Implement validity check
+1. How are patterns stored?
+- They should have 2 things: the pattern shape (definition) and the amount of points they award for each occurence
+- Shape: every pattern has a "main" cell
+- Have a method that takes grid and cell and returns pattern occurrences this particular cell (when treated as main) is part of
+- How to account for duplicates? - store an array of already found occurrences (lists of coords)
+- How to define 
 
-...
+2. Do that in the Pattern.cs class
 
-4. Get to the point where I have a set of tiles being spawned (on button click or just infinite?) 
-and I can drag them to the main hexGrid
+3. 
 
-6. Go from there!
+
 
 ToDecide:
 1. Is it ok for the display to have to know about how the tilelogic is wired?
 Are there alternatives?
+
+Long Term:
+
+1. Change to a proper hexagonal grid system that uses different coordinates and allows for custom grid shapes

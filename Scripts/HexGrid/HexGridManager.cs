@@ -135,6 +135,11 @@ public partial class HexGridManager : Node, IHexGrid
 		_hexGridDisplay.ReceiveNewTileVisual(id, visual, coords);
 	}
 
+	public Dictionary<Vector2I, GridCellData> GetGridCells()
+	{
+		return _hexGridData.GetGridCells();
+	}
+
 	public override void _Process(double delta)
 	{
 	}

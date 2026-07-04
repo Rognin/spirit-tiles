@@ -2,8 +2,9 @@
 
 public enum TileType
 {
-    Water,
-    Fire,
-    Mountain,
-    Forest
+    Blue,
+    Red,
+    Grey,
+    Green,
+    Yellow
 }

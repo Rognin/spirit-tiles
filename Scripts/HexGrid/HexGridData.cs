@@ -205,8 +205,11 @@ public partial class HexGridData : Node
         coords = Vector2I.Zero;
         return false;
     }
+    
+    // pattern matching helpers
+    
 
-    public Dictionary<Vector2I, GridCellData> GetCurrentCells()
+    public Dictionary<Vector2I, GridCellData> GetGridCells()
     {
         return _cells;
     }
@@ -226,7 +229,7 @@ public partial class HexGridData : Node
     {
         if (Input.IsActionJustPressed("debug_button_2"))
         {
-            PrintCurrentCells();
+            // PrintCurrentCells();
         }
     }
 }

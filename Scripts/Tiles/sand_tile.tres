@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="SharedTileData" format=3 uid="uid://byh4rch8ln6pi"]
+
+[ext_resource type="Texture2D" uid="uid://dgf5q58gc38mw" path="res://Assets/hexagon-512x591.png" id="1_1eyf8"]
+[ext_resource type="Script" uid="uid://clp7oltby12yw" path="res://Scripts/Tile/SharedTileData.cs" id="1_d1ioo"]
+
+[resource]
+script = ExtResource("1_d1ioo")
+Texture = ExtResource("1_1eyf8")
+Type = 4
+Color = Color(0.9372549, 0.7411765, 0.023529412, 1)
+metadata/_custom_type_script = "uid://clp7oltby12yw"
