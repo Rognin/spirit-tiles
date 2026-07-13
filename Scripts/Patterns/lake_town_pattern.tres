@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Pattern" format=3 uid="uid://cw823qly2d0ak"]
+
+[ext_resource type="Texture2D" uid="uid://bnjchw6enm8da" path="res://Scripts/Patterns/Pictures/lake_town_pick.png" id="1_legos"]
+[ext_resource type="Script" uid="uid://drvmk182sexxs" path="res://Scripts/PatternChecking/Pattern.cs" id="1_porhb"]
+
+[resource]
+script = ExtResource("1_porhb")
+Name = "lake town"
+Texture = ExtResource("1_legos")
+Score = 1
+_basePattern = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(-1, 1), Vector2i(0, 1)])
+PatternColors = Array[int]([1, 0, 0, 1])
+metadata/_custom_type_script = "uid://drvmk182sexxs"

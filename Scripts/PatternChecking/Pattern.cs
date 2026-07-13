@@ -13,6 +13,7 @@ namespace Spirittiles.Scripts.PatternChecker;
 public partial class Pattern : Resource
 {
 	[Export] public string Name { get; set; }
+	[Export] public Texture2D Texture { get; set; }
 	[Export] public int Score { get; set; }
 	[Export] private Array<Vector2I> _basePattern;
 	[Export] public Array<TileType> PatternColors { get; set; }

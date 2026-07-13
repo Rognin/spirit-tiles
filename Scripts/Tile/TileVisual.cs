@@ -12,6 +12,10 @@ public partial class TileVisual : Area2D
     // dragging
     private bool _dragging = false;
     private Vector2 _dragStartOffset = Vector2.Zero;
+    private Tween _scaleTween;
+    private Tween _tiltTween;
+    private float _lastX;
+
     
     // signals
     [Signal] public delegate void TileVisualDroppedOutsideOfAnyGridEventHandler(int id, Vector2 globalPos);
@@ -47,6 +51,17 @@ public partial class TileVisual : Area2D
         if (_dragging)
         {
             GlobalPosition = GetGlobalMousePosition() + _dragStartOffset;
+            float deltaX = GlobalPosition.X - _lastX;
+            _lastX = GlobalPosition.X;
+
+            float targetRotation = Mathf.Clamp(deltaX 
+                                               * 0.05f, -0.3f, 0.3f);
+
+            _tiltTween?.Kill();
+            _tiltTween = CreateTween();
+            _tiltTween.TweenProperty(this, "rotation",
+                targetRotation, 0.1f);
+
         }
     }
 
@@ -58,6 +73,11 @@ public partial class TileVisual : Area2D
             {
                 _dragging = true;
                 ZIndex = 1;
+                _scaleTween?.Kill();
+                _scaleTween = CreateTween();
+                _scaleTween.TweenProperty(this, "scale",  
+                        new Vector2(1.1f, 1.1f), 0.15f)
+                    .SetEase(Tween.EaseType.Out);
                 _dragStartOffset = GlobalPosition - GetGlobalMousePosition();
             }
         }
@@ -77,6 +97,18 @@ public partial class TileVisual : Area2D
                     
                     _dragging = false;
                     ZIndex = 0;
+                    _scaleTween?.Kill();
+                    _scaleTween = CreateTween();
+                    _scaleTween.TweenProperty(this, "scale",  
+                            Vector2.One, 0.15f)
+                        .SetEase(Tween.EaseType.Out);
+                    _tiltTween?.Kill();
+                    _tiltTween = CreateTween();
+                    _tiltTween.TweenProperty(this, "rotation",
+                            0f, 0.2f)
+                        .SetEase(Tween.EaseType.Out);
+
+                    
                     foreach (Area2D area in GetOverlappingAreas())
                     {
                         if (area.GetParent() is ISnapAreaForTiles snapArea)

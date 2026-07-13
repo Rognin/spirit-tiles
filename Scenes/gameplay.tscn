@@ -9,10 +9,22 @@
 [ext_resource type="Resource" uid="uid://3mgdp1v48jp3" path="res://Scripts/Tiles/water_tile.tres" id="6_5h7oy"]
 [ext_resource type="Resource" uid="uid://bdyhgrh2awj6x" path="res://Scripts/Tiles/forest_tile.tres" id="7_ltefv"]
 [ext_resource type="Resource" uid="uid://byh4rch8ln6pi" path="res://Scripts/Tiles/sand_tile.tres" id="8_rg35f"]
+[ext_resource type="Resource" uid="uid://ch6ykhevgyycp" path="res://Scripts/Tiles/earth_tile.tres" id="9_1ff3a"]
 [ext_resource type="Script" uid="uid://dcp2epg3xx4ed" path="res://Scripts/PatternChecking/PatternOwner.cs" id="10_ltefv"]
 [ext_resource type="Resource" uid="uid://c7tpp8nhlgw1l" path="res://Scripts/Patterns/petting_zoo_shape.tres" id="11_rg35f"]
 [ext_resource type="Resource" uid="uid://bwvyarqlujtcv" path="res://Scripts/Patterns/triangle_shape.tres" id="12_rg35f"]
 [ext_resource type="Script" uid="uid://lwdxnliakk5a" path="res://Scripts/PatternChecking/PatternChecker.cs" id="13_jb71e"]
+[ext_resource type="Script" uid="uid://bc8qymt7ncnlx" path="res://Scripts/PatternChecking/TestPatternCoordinator.cs" id="14_gb8q7"]
+[ext_resource type="Script" uid="uid://dns7dn2diox7q" path="res://Scripts/PatternChecking/PatternDatabase.cs" id="15_1ff3a"]
+[ext_resource type="Script" uid="uid://td477ubf2ha7" path="res://Scripts/UI/ScoreDisplay.cs" id="16_icchp"]
+[ext_resource type="Resource" uid="uid://ctdjy5u6qqbv2" path="res://Scripts/Patterns/beach_pattern.tres" id="16_kj63f"]
+[ext_resource type="Resource" uid="uid://casd2e4mqgdxi" path="res://Scripts/Patterns/forest_lake_pattern.tres" id="17_icchp"]
+[ext_resource type="Resource" uid="uid://dxsu78xai31jy" path="res://Scripts/Patterns/island_pattern.tres" id="18_8ipd1"]
+[ext_resource type="Resource" uid="uid://bcaiv0oc8grt1" path="res://Scripts/Patterns/forest_river_pattern.tres" id="19_lavkw"]
+[ext_resource type="Resource" uid="uid://cw823qly2d0ak" path="res://Scripts/Patterns/lake_town_pattern.tres" id="20_bsu20"]
+[ext_resource type="Resource" uid="uid://h157jp2haahu" path="res://Scripts/Patterns/red_grey_blue.tres" id="21_fhel8"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_kj63f"]
 
 [node name="Gameplay" type="Node2D" unique_id=1647816417]
 
@@ -26,17 +38,19 @@ HexGridManagers = [NodePath("HexGridManager")]
 TileHolders = [NodePath("TileHolder")]
 TileMoveCoordinator = NodePath("TileMoveCoordinator")
 PatternChecker = NodePath("PatternChecker")
-Patterns = Array[Object]([ExtResource("11_rg35f"), ExtResource("12_rg35f")])
+Patterns = Array[Object]([])
 
 [node name="TileIdAllocator" type="Node" parent="Board" unique_id=626204293]
 script = ExtResource("2_puebw")
 
 [node name="HexGridManager" parent="Board" unique_id=1654337369 groups=["HexGridManagers"] instance=ExtResource("3_m34ki")]
-position = Vector2(-290, -190)
+position = Vector2(-322.54, -146.325)
+scale = Vector2(0.8, 0.8)
 
 [node name="TileHolder" parent="Board" unique_id=1646061118 instance=ExtResource("4_kwrm5")]
-position = Vector2(-198, 129.565)
-_tilesToSpawn = Array[Object]([ExtResource("5_puebw"), ExtResource("6_5h7oy"), ExtResource("7_ltefv"), ExtResource("8_rg35f")])
+position = Vector2(-231.275, 129.565)
+scale = Vector2(0.8, 0.8)
+_tilesToSpawn = Array[Object]([ExtResource("5_puebw"), ExtResource("6_5h7oy"), ExtResource("7_ltefv"), ExtResource("8_rg35f"), ExtResource("9_1ff3a"), ExtResource("6_5h7oy")])
 
 [node name="TileMoveCoordinator" type="Node2D" parent="Board" unique_id=615933670]
 script = ExtResource("5_r8bcl")
@@ -49,5 +63,58 @@ _pattern = ExtResource("11_rg35f")
 script = ExtResource("10_ltefv")
 _pattern = ExtResource("12_rg35f")
 
-[node name="PatternChecker" type="Node" parent="Board" unique_id=2032006454]
+[node name="PatternChecker" type="Node" parent="Board" unique_id=2032006454 node_paths=PackedStringArray("_scoreDisplay")]
 script = ExtResource("13_jb71e")
+_scoreDisplay = NodePath("../CanvasLayer/Panel/Label")
+
+[node name="TestPatternCoordinator" type="Node" parent="Board" unique_id=351518276 node_paths=PackedStringArray("_patternDatabase", "_patternsDisplay", "_patternChecker")]
+script = ExtResource("14_gb8q7")
+_patternDatabase = NodePath("../../PatternDatabase")
+_patternsDisplay = NodePath("../CanvasLayer/PanelContainer/ScrollContainer/VBoxContainer")
+_patternChecker = NodePath("../PatternChecker")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="Board" unique_id=1829334114]
+
+[node name="PanelContainer" type="PanelContainer" parent="Board/CanvasLayer" unique_id=659277173]
+custom_minimum_size = Vector2(200, 0)
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Board/CanvasLayer/PanelContainer" unique_id=39322810]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Board/CanvasLayer/PanelContainer/ScrollContainer" unique_id=2054651542]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="Board/CanvasLayer" unique_id=1822866085]
+custom_minimum_size = Vector2(200, 100)
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -20.0
+offset_right = 20.0
+offset_bottom = 40.0
+grow_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_kj63f")
+
+[node name="Label" type="Label" parent="Board/CanvasLayer/Panel" unique_id=2138516576]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "0"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("16_icchp")
+
+[node name="PatternDatabase" type="Node" parent="." unique_id=1303954511]
+script = ExtResource("15_1ff3a")
+Patterns = Array[Object]([ExtResource("16_kj63f"), ExtResource("17_icchp"), ExtResource("18_8ipd1"), ExtResource("19_lavkw"), ExtResource("20_bsu20"), ExtResource("21_fhel8")])

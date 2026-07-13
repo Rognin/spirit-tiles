@@ -180,7 +180,7 @@ public partial class HexGridDisplay : Node2D, ISnapAreaForTiles
     
     public bool TryGetSnapPosition(Vector2 worldPos, out Vector2I snapCoords)
     {
-        Vector2 localPos = worldPos - GlobalPosition;
+        Vector2 localPos = ToLocal(worldPos);
         float minDist = float.MaxValue;
         Vector2I closestCellCoord = default;
         foreach (var (coord, center) in _cellCenters)

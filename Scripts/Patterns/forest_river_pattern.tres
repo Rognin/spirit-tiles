@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Pattern" format=3 uid="uid://bcaiv0oc8grt1"]
+
+[ext_resource type="Script" uid="uid://drvmk182sexxs" path="res://Scripts/PatternChecking/Pattern.cs" id="1_0wjwt"]
+[ext_resource type="Texture2D" uid="uid://b7hrv4fjd5lyd" path="res://Scripts/Patterns/Pictures/river_forest_pic.png" id="1_f3p58"]
+
+[resource]
+script = ExtResource("1_0wjwt")
+Name = "forest river"
+Texture = ExtResource("1_f3p58")
+Score = 1
+_basePattern = Array[Vector2i]([Vector2i(0, 0), Vector2i(1, 0), Vector2i(2, 0)])
+PatternColors = Array[int]([3, 0, 3])
+metadata/_custom_type_script = "uid://drvmk182sexxs"

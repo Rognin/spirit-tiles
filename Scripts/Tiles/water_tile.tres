@@ -6,4 +6,4 @@
 [resource]
 script = ExtResource("1_vqrtv")
 Texture = ExtResource("1_1kl76")
-Color = Color(0.2509804, 0.43529412, 0.9098039, 1)
+Color = Color(2.4065375e-06, 0.5816468, 0.83482254, 1)

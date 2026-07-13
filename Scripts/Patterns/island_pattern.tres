@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="Pattern" format=3 uid="uid://dxsu78xai31jy"]
+
+[ext_resource type="Texture2D" uid="uid://d0fbf7kekj85u" path="res://Scripts/Patterns/Pictures/island_pic.png" id="1_1c4p0"]
+[ext_resource type="Script" uid="uid://drvmk182sexxs" path="res://Scripts/PatternChecking/Pattern.cs" id="1_c7gef"]
+
+[resource]
+script = ExtResource("1_c7gef")
+Name = "island"
+Texture = ExtResource("1_1c4p0")
+Score = 1
+_basePattern = Array[Vector2i]([Vector2i(0, 0), Vector2i(0, 1), Vector2i(1, 1)])
+PatternColors = Array[int]([0, 4, 0])
+metadata/_custom_type_script = "uid://drvmk182sexxs"

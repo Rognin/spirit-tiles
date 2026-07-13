@@ -2,15 +2,18 @@ using System.Collections.Generic;
 using Godot;
 using Godot.Collections;
 using Spirittiles.Scripts.PatternChecker;
+using Spirittiles.Scripts.UI;
 
 namespace Spirittiles.Scripts.PatternChecking;
 
 public partial class PatternChecker : Node
 {
-	private Array<Pattern> _patterns;
+	[Export] private Array<Pattern> _patterns;
 	private HexGridManager _grid;
-	private Godot.Collections.Dictionary<Vector2I, GridCellData> _cellsAxial = new Godot.Collections.Dictionary<Vector2I, GridCellData>();
-
+	private Godot.Collections.Dictionary<Vector2I, GridCellData> _cellsAxial = new ();
+	[Export] private ScoreDisplay _scoreDisplay;
+	
+	
 	public void Initialize(HexGridManager grid)
 	{
 		_patterns = new Array<Pattern>();
@@ -32,15 +35,30 @@ public partial class PatternChecker : Node
 	{
 		_patterns.Clear();
 	}
+
+	public void UpdateScore()
+	{
+		int scoreToAdd = CalculateTotalScore();
+		_scoreDisplay.AddScore(scoreToAdd);
+	}
 	
 	private int CalculateTotalScore()
 	{
 		SynchronizeGridData();
 		int totalScore = 0;
+		string debugScoreString = "";
 		foreach (Pattern pattern in _patterns)
 		{
-			totalScore += CalculatePatternScore(pattern);
+			int score = CalculatePatternScore(pattern);
+			debugScoreString += $"{score} + ";
+			totalScore += score;
 		}
+
+		if (debugScoreString != "")
+		{
+			GD.Print(debugScoreString.Substring(0, debugScoreString.Length - 1) + $"= {totalScore}");
+		}
+
 		return totalScore;
 	}
 
@@ -59,8 +77,8 @@ public partial class PatternChecker : Node
 			{
 				bool patternValid = true;
 				HashSet<Vector2I> currentOccurrence = new HashSet<Vector2I>();
-				// if this cell is a "starting point" of this particular rotation
-				// to do this, go sequentially through the current pattern rotation and see if it matches
+				// if this cell is a "starting point" of this particular rotation.
+				// to do this, go sequentially through the current pattern rotation and see if it matches.
 				// first, check if the cell itself could be the starting point
 				if (_cellsAxial[coords].IsEmpty())
 				{
@@ -140,6 +158,11 @@ public partial class PatternChecker : Node
 			// PrintCurrentCells();
 			// PrintCurrentPatterns();
 			CalculateTotalScore();
+		}
+
+		if (Input.IsActionJustPressed("debug_button_4"))
+		{
+			UpdateScore();
 		}
 	}
 

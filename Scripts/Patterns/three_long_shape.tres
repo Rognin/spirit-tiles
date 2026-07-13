@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Pattern" format=3 uid="uid://dpk2covfr33td"]
+
+[ext_resource type="Script" uid="uid://drvmk182sexxs" path="res://Scripts/PatternChecking/Pattern.cs" id="1_wb2o6"]
+
+[resource]
+script = ExtResource("1_wb2o6")
+_basePattern = null
+PatternColors = null
+metadata/_custom_type_script = "uid://drvmk182sexxs"
